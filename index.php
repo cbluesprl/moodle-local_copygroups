@@ -37,7 +37,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 
-$returnurl = new moodle_url('/local/copygroups/index.php', ['courseid' => $course->id]);
+$returnurl = new moodle_url('/group/index.php', ['id' => $course->id]);
 
 
 $mform = new copygroups_form(null, ['courseid' => $course->id]);
@@ -46,6 +46,7 @@ if($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
     group_helper::copy_all_groups($data->source_course, $data->courseid);
+    redirect($returnurl, get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 

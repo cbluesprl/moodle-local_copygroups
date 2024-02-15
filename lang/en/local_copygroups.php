@@ -13,5 +13,6 @@ $string['form:btn_import'] = 'Import';
 $string['form:btn_import_from_courses'] = 'Import groups from courses';
 $string['form:input_shortname'] = 'Shortname of the course you want to import groups from';
 $string['form:input_shortname_help'] = 'Select the course from which you want to import groups';
+$string['form:success'] = 'Group(s) imported with success';
 /** Settings */
 $string['settings:select_roles'] = 'Select roles that are allowed to import';

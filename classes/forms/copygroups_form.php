@@ -56,9 +56,9 @@ class copygroups_form extends moodleform {
             JOIN {user} u ON ra.userid = u.id
             JOIN {role} r ON ra.roleid = r.id
             JOIN {groups} g ON c.id = g.courseid
-            WHERE r.id IN (" . $roles_can_import . ") -- TODO : 606808 enseignant, responsable pédagogique, secrétaire pédagogique'
+            WHERE r.id IN (" . $roles_can_import . ")
             AND u.id = :userid
-            AND c.id <> :thiscourseid;
+            AND c.id <> :thiscourseid; -- on n'importe pas depuis le cours courant
 ";
         $req = $DB->get_records_sql($sql, [
             'context_course' => CONTEXT_COURSE,
@@ -76,7 +76,7 @@ class copygroups_form extends moodleform {
         $mform->setType('source_course', PARAM_INT);
         $mform->addHelpButton('source_course', 'form:input_shortname', 'local_copygroups');
 
-        $this->add_action_buttons(false, get_string('form:btn_import', 'local_copygroups'));
+        $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
         $this->set_data($data);
     }
 
