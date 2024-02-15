@@ -12,12 +12,13 @@
  * Dans l'idée, vérifier que le courseid existe
  * Vérifier les droits de l'utilisateur dans le cours
  */
+use local_copygroups\group_helper;
 
 
 require('../../config.php');
 require_once("$CFG->dirroot/local/copygroups/classes/forms/copygroups_form.php");
-//require_once('lib.php');
-//require_once( $CFG->dirroot.'/local/copygroups/classes/helpers.php');
+require_once("$CFG->dirroot/local/copygroups/classes/group_helper.php");
+
 
 $courseid = required_param('courseid', PARAM_INT);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
@@ -26,32 +27,27 @@ $context = context_course::instance($course->id);
 require_login($course);
 require_capability('moodle/course:managegroups', $context);
 
-$PAGE->navbar->add(get_string('pluginname', 'local_copygroups'));
+$strcopygroups = get_string('pluginname', 'local_copygroups');
+$PAGE->navbar->add($strcopygroups);
 navigation_node::override_active_url(new moodle_url('/local/copygroups/index.php', array('courseid' => $course->id)));
 
 $PAGE->set_url('/local/copygroups/index.php', array('courseid' => $course->id));
-$PAGE->set_pagelayout('admin');
+$PAGE->set_title("$course->shortname: $strcopygroups");
+$PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 
-$returnurl = new moodle_url('/local/copygroups/index.php', array('courseid' => $course->id));
+$returnurl = new moodle_url('/local/copygroups/index.php', ['courseid' => $course->id]);
 
-$instance = new stdClass();
-$instance->courseid = $course->id;
 
-$mform = new copygroups_form(null, array($course, $instance));
+$mform = new copygroups_form(null, ['courseid' => $course->id]);
 
 if($mform->is_cancelled()) {
-    echo "<pre>"; var_dump($returnurl); die;
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    /**
-     *
-     */
-    redirect($returnurl);
+    group_helper::copy_all_groups($data->source_course, $data->courseid);
 }
 
-$PAGE->set_heading($course->fullname);
-$PAGE->set_title(get_string('pluginname', 'local_copygroups'));
 
 echo $OUTPUT->header();
 $mform->display();

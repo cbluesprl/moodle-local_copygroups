@@ -35,11 +35,12 @@ class copygroups_form extends moodleform {
         global $DB, $USER;
 
         $mform  = $this->_form;
+        $data  = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('pluginname', 'local_copygroups'));
-        list($course, $instance) = $this->_customdata;
-        $coursecontext = context_course::instance($course->id);
 
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
         /**
          * On sélectionne tous les cours où l'utilisateur a le rôle souhaité, et où il existe des groupes à importer
          */
@@ -47,7 +48,6 @@ class copygroups_form extends moodleform {
         if(empty($roles_can_import)) {
             return false;
         }
-
 
         $sql = "SELECT DISTINCT(c.id), c.shortname
             FROM {role_assignments} ra
@@ -57,12 +57,14 @@ class copygroups_form extends moodleform {
             JOIN {role} r ON ra.roleid = r.id
             JOIN {groups} g ON c.id = g.courseid
             WHERE r.id IN (" . $roles_can_import . ") -- TODO : 606808 enseignant, responsable pédagogique, secrétaire pédagogique'
-            AND u.id = :userid;
+            AND u.id = :userid
+            AND c.id <> :thiscourseid;
 ";
         $req = $DB->get_records_sql($sql, [
             'context_course' => CONTEXT_COURSE,
             'roles_can_import' => get_config('local_copygroups', 'roles_can_import_groups'),
-            'userid' => $USER->id
+            'userid' => $USER->id,
+            'thiscourseid' => $data['courseid']
         ]);
 
         $courses = array();
@@ -74,48 +76,8 @@ class copygroups_form extends moodleform {
         $mform->setType('source_course', PARAM_INT);
         $mform->addHelpButton('source_course', 'form:input_shortname', 'local_copygroups');
 
-        $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
-        $this->set_data($instance);
-
-
-//        $mform->addElement('header', 'general', get_string('pluginname', 'enrol_groupsync'));
-//
-//        $nameattribs = array('size' => '20', 'maxlength' => '255');
-//        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'), $nameattribs);
-//        $mform->setType('name', PARAM_TEXT);
-//        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'server');
-//
-//        $cohorts = array('' => get_string('choosedots'));
-//        list($sqlparents, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids());
-//        $sql = "SELECT id, name, idnumber, contextid
-//                  FROM {cohort}
-//                 WHERE contextid $sqlparents
-//              ORDER BY name ASC, idnumber ASC";
-//        $rs = $DB->get_recordset_sql($sql, $params);
-//        foreach ($rs as $c) {
-//            $context = context::instance_by_id($c->contextid);
-//            if (!has_capability('moodle/cohort:view', $context)) {
-//                continue;
-//            }
-//            $cohorts[$c->id] = format_string($c->name);
-//        }
-//        $rs->close();
-//        $mform->addElement('select', 'customint1', get_string('cohort', 'cohort'), $cohorts);
-//        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
-//
-//        $groups = array('' => get_string('choosedots'));
-//        foreach (groups_get_all_groups($course->id) as $group) {
-//            $groups[$group->id] = format_string($group->name, true, array('context' => $coursecontext));
-//        }
-//        $mform->addElement('select', 'customint2', get_string('addgroup', 'enrol_groupsync'), $groups);
-//        $mform->addRule('customint2', get_string('required'), 'required', null, 'client');
-//
-//        $mform->addElement('hidden', 'courseid', null);
-//        $mform->setType('courseid', PARAM_INT);
-//
-//        $this->add_action_buttons(true, get_string('addinstance', 'enrol'));
-//
-//        $this->set_data($instance);
+        $this->add_action_buttons(false, get_string('form:btn_import', 'local_copygroups'));
+        $this->set_data($data);
     }
 
     /**
