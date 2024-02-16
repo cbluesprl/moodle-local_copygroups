@@ -57,7 +57,7 @@ class group_helper
                             JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
                             JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
                             JOIN mdl_user_enrolments uedest ON uedest.userid = ue.userid
-                            JOIN mdl_enrol edest ON uedest.enrolid = edest.id AND edest.courseid = 3
+                            JOIN mdl_enrol edest ON uedest.enrolid = edest.id AND edest.courseid = :coursedestinationid
                             WHERE ue.status = 0
                               AND ue.timestart < UNIX_TIMESTAMP()
                               AND (ue.timeend = 0 OR ue.timeend > UNIX_TIMESTAMP())
