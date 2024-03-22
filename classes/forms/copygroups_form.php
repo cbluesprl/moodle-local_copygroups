@@ -46,6 +46,7 @@ class copygroups_form extends moodleform {
          */
         $roles_can_import = get_config('local_copygroups', 'roles_can_import_groups');
         if(empty($roles_can_import)) {
+
             return false;
         }
 
@@ -68,6 +69,7 @@ class copygroups_form extends moodleform {
         ]);
 
         $courses = array();
+        $courses[0] = get_string('select');
         foreach($req as $c) {
             $courses[$c->id] = $c->shortname;
         }
@@ -75,6 +77,9 @@ class copygroups_form extends moodleform {
         $mform->addElement('autocomplete', 'source_course', get_string('form:input_shortname', 'local_copygroups'), $courses);
         $mform->setType('source_course', PARAM_INT);
         $mform->addHelpButton('source_course', 'form:input_shortname', 'local_copygroups');
+
+        $mform->addElement('checkbox', 'select_distinct_groups', get_string('form:select_distinct_groups', 'local_copygroups'));
+        $mform->addHelpButton('select_distinct_groups', 'form:select_distinct_groups:desc', 'local_copygroups');
 
         $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
         $this->set_data($data);
