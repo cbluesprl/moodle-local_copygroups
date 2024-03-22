@@ -31,7 +31,7 @@ $PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/group/index.php', ['id' => $original_course->id]);
 $validate_url = new moodle_url('/local/copygroups/groups_select.php', ['target' => $course->id, 'original' => $original_courseid]);
-$PAGE->requires->js_call_amd('local_copygroups/validation', 'init');
+$PAGE->requires->js_call_amd('local_copygroups/validation', 'init', ['from' => 'groups_select']);
 
 $mform = new copydistinctgroups_form($validate_url, ['targetid' => $course->id, 'originalid' => $original_courseid]);
 

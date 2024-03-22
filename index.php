@@ -35,7 +35,7 @@ $PAGE->set_title("$course->shortname: $strcopygroups");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
-$PAGE->requires->js_call_amd('local_copygroups/validation', 'init');
+$PAGE->requires->js_call_amd('local_copygroups/validation', 'init', ['from' => 'index']);
 
 $returnurl = new moodle_url('/group/index.php', ['id' => $course->id]);
 
