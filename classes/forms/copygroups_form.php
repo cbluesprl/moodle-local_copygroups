@@ -81,6 +81,8 @@ class copygroups_form extends moodleform {
         $mform->addElement('checkbox', 'select_distinct_groups', get_string('form:select_distinct_groups', 'local_copygroups'));
         $mform->addHelpButton('select_distinct_groups', 'form:select_distinct_groups:desc', 'local_copygroups');
 
+        $mform->disabledIf('submitbutton', 'source_course', 'eq', NULL);
+        $mform->disabledIf('submitbutton', 'source_course', 'eq', 0);
         $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
         $this->set_data($data);
     }
