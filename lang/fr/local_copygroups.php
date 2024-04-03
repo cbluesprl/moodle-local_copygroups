@@ -21,5 +21,5 @@ $string['course_import_groups_link'] = 'Importer des groupes';
 $string['settings:select_roles'] = 'Sélectionnez les rôles autorisés à importer les groupes d\'autres cours';
 
 /** Modal */
-$string['modalcontentvalidation'] = 'Je valide l\'importation du groupe sélectionné. J\'ai vérifié qu\'aucun groupe n\'existe déjà dans le cours cible.';
+$string['modalcontentvalidation'] = 'Attention, si des groupes existent dans votre cours, ils pourraient être modifiés';
 $string['modalcontentvalidationtitle'] = 'Validation des groupes';
