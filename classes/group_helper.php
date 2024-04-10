@@ -43,7 +43,6 @@ class group_helper
                 $existinggroupsbyname[$copy->name] = $copy;
             }
 
-
             // remove members from existing groups
             list($insql, $inparams) = $DB->get_in_or_equal(array_keys($existinggroups));
             $sql = "SELECT userid, groupid FROM {groups_members} WHERE groupid $insql";
@@ -53,7 +52,7 @@ class group_helper
             }
 
             list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groupstocopy), SQL_PARAMS_NAMED);
-            $sql = "SELECT ue.id, ue.userid, gm.groupid FROM {user_enrolments} ue
+            $sql = "SELECT gm.id as uselesskeytoavoidarrayoverided, ue.id, ue.userid, gm.groupid FROM {user_enrolments} ue
                             JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
                             JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
                             JOIN {user_enrolments} uedest ON uedest.userid = ue.userid
