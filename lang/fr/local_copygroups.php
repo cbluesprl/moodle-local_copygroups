@@ -14,7 +14,8 @@ $string['form:btn_import_from_courses'] = 'Importer les groupes depuis un cours'
 $string['form:input_shortname'] = 'Sélectionnez le cours depuis lequel importer les groupes';
 $string['form:input_shortname_help'] = 'Vous pouvez taper le shortname du cours pour accélérer votre recherche';
 $string['form:select_distinct_groups'] = 'Choisir des groupes spécifiques';
-$string['form:select_distinct_groups:desc'] = 'Renvoi vers une page où vous pourrez sélectionner les groupes que vous souhaitez importer';
+$string['form:select_distinct_groups:desc'] = 'Renvoie vers une page où vous pourrez sélectionner les groupes que vous souhaitez importer';
+$string['form:select_distinct_groups:desc_help'] = 'Renvoie vers une page où vous pourrez sélectionner les groupes que vous souhaitez importer';
 $string['form:success'] = 'Groupes importés avec succès';
 $string['course_import_groups_link'] = 'Importer des groupes';
 /** Settings */

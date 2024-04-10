@@ -41,10 +41,10 @@ class copydistinctgroups_form extends moodleform {
         $mform->addElement('header', 'general', get_string('pluginname', 'local_copygroups'));
 
         $mform->addElement('hidden', 'targetid');
-        $mform->setType('courseid', PARAM_INT);
+        $mform->setType('targetid', PARAM_INT);
 
         $mform->addElement('hidden', 'originalid');
-        $mform->setType('courseid', PARAM_INT);
+        $mform->setType('originalid', PARAM_INT);
 
         $groups = groups_get_all_groups($data['targetid']);
         if(!empty($groups)) {

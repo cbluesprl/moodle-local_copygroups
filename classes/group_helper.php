@@ -25,7 +25,6 @@ class group_helper
 
     static public function copy_groups(array $groupstocopy, int $coursesourceid, int $coursedestinationid) {
         global $DB;
-
         if (count($groupstocopy) > 0) {
             $groupstocopybyname = self::get_groups_by_name($groupstocopy);
 

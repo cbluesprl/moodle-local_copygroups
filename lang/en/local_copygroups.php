@@ -15,6 +15,7 @@ $string['form:input_shortname'] = 'Shortname of the course you want to import gr
 $string['form:input_shortname_help'] = 'Select the course from which you want to import groups';
 $string['form:select_distinct_groups'] = 'Select specific groups';
 $string['form:select_distinct_groups:desc'] = 'Link to a page where you can select the groups you wish to import';
+$string['form:select_distinct_groups:desc_help'] = 'Link to a page where you can select the groups you wish to import';
 $string['form:success'] = 'Group(s) imported with success';
 $string['course_import_groups_link'] = 'Import groups';
 /** Settings */

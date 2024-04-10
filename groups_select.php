@@ -45,14 +45,12 @@ if($mform->is_cancelled()) {
     $groupids = [];
     foreach ($data as $key => $da) {
         $groupid = explode('_' , $key)[1];
-        $groupids[] = $DB->get_record('groups' ,['id' => $groupid]);
+        $groupids[$groupid] = $DB->get_record('groups' ,['id' => $groupid]);
     }
     group_helper::copy_groups($groupids , $courseid, $original_courseid);
     redirect($returnurl,get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
 
 }
-
-
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();

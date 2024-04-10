@@ -44,7 +44,7 @@ $mform = new copygroups_form(null, ['courseid' => $course->id]);
 if($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    if($data->select_distinct_groups == '1') {
+    if(isset($data->select_distinct_groups) && $data->select_distinct_groups == '1') {
         redirect(new moodle_url('/local/copygroups/groups_select.php', ['target'=> $data->source_course, 'original' => $course->id]));
     } else {
         group_helper::copy_all_groups($data->source_course, $data->courseid);
