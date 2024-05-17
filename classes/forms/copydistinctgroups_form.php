@@ -25,18 +25,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+global $CFG;
 
-class copydistinctgroups_form extends moodleform {
+require_once($CFG->libdir . '/formslib.php');
+
+class copydistinctgroups_form extends moodleform
+{
 
     /**
      * Defines the form fields.
      */
-    public function definition() {
-        global $DB, $USER;
-
-        $mform  = $this->_form;
-        $data  = $this->_customdata;
+    public function definition()
+    {
+        $mform = $this->_form;
+        $data = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('pluginname', 'local_copygroups'));
 
@@ -47,27 +49,14 @@ class copydistinctgroups_form extends moodleform {
         $mform->setType('originalid', PARAM_INT);
 
         $groups = groups_get_all_groups($data['targetid']);
-        if(!empty($groups)) {
+        if (!empty($groups)) {
             foreach ($groups as $group) {
                 $mform->addElement('checkbox', 'group_' . $group->id, $group->name);
             }
-        } else {
-            // Todo afficher qu'aucun group n'est disponible
         }
 
         $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
         $this->set_data($data);
-    }
-
-    /**
-     * Validates the form data.
-     *
-     * @param array $data submitted form data
-     * @param array $files not used here
-     * @return array errors
-     */
-    public function validation($data, $files) {
-
     }
 }
 

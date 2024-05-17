@@ -21,5 +21,8 @@
  */
 
 $plugin->component = 'local_copygroups';
-$plugin->version  = 2024020000;
-$plugin->requires = 2022112803;
+$plugin->version  = 2024021500;
+$plugin->requires = 2022041900;
+
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = "1.0";

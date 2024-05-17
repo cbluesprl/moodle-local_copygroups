@@ -24,29 +24,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
-class copygroups_form extends moodleform {
+class copygroups_form extends moodleform
+{
 
     /**
      * Defines the form fields.
      */
-    public function definition() {
+    public function definition()
+    {
         global $DB, $USER;
 
-        $mform  = $this->_form;
-        $data  = $this->_customdata;
+        $mform = $this->_form;
+        $data = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('pluginname', 'local_copygroups'));
 
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
-        /**
-         * On sélectionne tous les cours où l'utilisateur a le rôle souhaité, et où il existe des groupes à importer
-         */
-        $roles_can_import = get_config('local_copygroups', 'roles_can_import_groups');
-        if(empty($roles_can_import)) {
 
+        $roles_can_import = get_config('local_copygroups', 'roles_can_import_groups');
+        if (empty($roles_can_import)) {
             return false;
         }
 
@@ -68,9 +67,9 @@ class copygroups_form extends moodleform {
             'thiscourseid' => $data['courseid']
         ]);
 
-        $courses = array();
+        $courses = [];
         $courses[0] = get_string('select');
-        foreach($req as $c) {
+        foreach ($req as $c) {
             $courses[$c->id] = $c->shortname;
         }
 
@@ -81,31 +80,10 @@ class copygroups_form extends moodleform {
         $mform->addElement('checkbox', 'select_distinct_groups', get_string('form:select_distinct_groups', 'local_copygroups'));
         $mform->addHelpButton('select_distinct_groups', 'form:select_distinct_groups:desc', 'local_copygroups');
 
-        $mform->disabledIf('submitbutton', 'source_course', 'eq', NULL);
+        $mform->disabledIf('submitbutton', 'source_course', 'eq', null);
         $mform->disabledIf('submitbutton', 'source_course', 'eq', 0);
         $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
         $this->set_data($data);
-    }
-
-    /**
-     * Validates the form data.
-     *
-     * @param array $data submitted form data
-     * @param array $files not used here
-     * @return array errors
-     */
-    public function validation($data, $files) {
-        global $DB;
-
-//        $errors = parent::validation($data, $files);
-//
-//        $params = array('customint2' => $data['customint2'], 'customint1' => $data['customint1'], 'courseid' => $data['courseid']);
-//        if ($DB->record_exists_select('enrol', "customint1 = :customint1 AND customint2 = :customint2 AND courseid = :courseid
-//                AND enrol = 'groupsync'", $params)) {
-//            $errors['customint2'] = get_string('instanceexists', 'enrol_groupsync');
-//        }
-//
-//        return $errors;
     }
 }
 

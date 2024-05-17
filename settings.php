@@ -25,17 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-
-    $category = new admin_category('local_copygroups',
-        get_string('pluginname', 'local_copygroups'));
+    $category = new admin_category('local_copygroups', get_string('pluginname', 'local_copygroups'));
     $ADMIN->add('localplugins', $category);
 
-    $settings = new admin_settingpage(
-        'local_copygroups_settings',
-        get_string('settings'),
-    );
-
-    $roles = array_map(function($role) { return $role->localname; } , role_get_names());
+    $settings = new admin_settingpage('local_copygroups_settings', get_string('settings'));
+    $roles = array_map(function ($role) { return $role->localname; }, role_get_names());
 
     $settings->add(new admin_setting_configmultiselect(
             'local_copygroups/roles_can_import_groups',
@@ -46,9 +40,5 @@ if ($hassiteconfig) {
         )
     );
 
-
-
     $ADMIN->add('local_copygroups', $settings);
-
-
 }

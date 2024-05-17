@@ -7,15 +7,19 @@
  * @copyright 2024 CBlue SPRL {@link https://www.cblue.be}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_copygroups;
 
 use cache_helper;
+
+global $CFG;
 
 require($CFG->dirroot . '/group/lib.php');
 
 class group_helper
 {
-    static public function copy_all_groups($coursesourceid, $coursedestinationid) {
+    static public function copy_all_groups($coursesourceid, $coursedestinationid)
+    {
         global $DB;
 
         $groups = $DB->get_records('groups', ['courseid' => $coursesourceid]);
@@ -23,7 +27,8 @@ class group_helper
         return self::copy_groups($groups, $coursesourceid, $coursedestinationid);
     }
 
-    static public function copy_groups(array $groupstocopy, int $coursesourceid, int $coursedestinationid) {
+    static public function copy_groups(array $groupstocopy, int $coursesourceid, int $coursedestinationid)
+    {
         global $DB;
         if (count($groupstocopy) > 0) {
             $groupstocopybyname = self::get_groups_by_name($groupstocopy);
@@ -32,7 +37,7 @@ class group_helper
             $existinggroups = $DB->get_records('groups', ['courseid' => $coursedestinationid]);
             $existinggroupsbyname = self::get_groups_by_name($existinggroups);
 
-            // creates missing groups
+            // Create missing groups
             $groups_to_insert = array_diff_key($groupstocopybyname, $existinggroupsbyname);
             foreach ($groups_to_insert as $group) {
                 $copy = clone $group;
@@ -42,15 +47,15 @@ class group_helper
                 $existinggroupsbyname[$copy->name] = $copy;
             }
 
-            // remove members from existing groups
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($existinggroups));
+            // Remove members from existing groups
+            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($existinggroups));
             $sql = "SELECT userid, groupid FROM {groups_members} WHERE groupid $insql";
             $members = $DB->get_records_sql($sql, $inparams);
             foreach ($members as $member) {
                 groups_remove_member($member->groupid, $member->userid);
             }
 
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groupstocopy), SQL_PARAMS_NAMED);
+            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($groupstocopy), SQL_PARAMS_NAMED);
             $sql = "SELECT gm.id as uselesskeytoavoidarrayoverided, ue.id, ue.userid, gm.groupid FROM {user_enrolments} ue
                             JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
                             JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
@@ -70,17 +75,20 @@ class group_helper
             foreach ($results as $result) {
                 $groupsourcename = $groupstocopy[$result->groupid]->name;
                 $groupid = $existinggroupsbyname[$groupsourcename]->id;
-                groups_add_member($groupid,$result->userid);
+                groups_add_member($groupid, $result->userid);
             }
-            cache_helper::invalidate_by_definition('core', 'groupdata', [], [$coursesourceid,$coursedestinationid]);
+            cache_helper::invalidate_by_definition('core', 'groupdata', [], [$coursesourceid, $coursedestinationid]);
+
+            return true;
+        } else {
+            debugging('No groups found');
         }
-        else {
-            debugging('no groups found');
-            return false;
-        }
+
+        return false;
     }
 
-    static protected function get_groups_by_name($groups) {
+    static protected function get_groups_by_name($groups)
+    {
         $groupsbyname = [];
 
         foreach ($groups as $group) {
