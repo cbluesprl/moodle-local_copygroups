@@ -8,6 +8,7 @@
  */
 
 use local_copygroups\group_helper;
+
 global $PAGE, $CFG, $DB, $OUTPUT;
 
 require('../../config.php');
@@ -23,7 +24,7 @@ $context = context_course::instance($course->id);
 require_login($course);
 require_capability('moodle/course:managegroups', $context);
 
-$PAGE->set_url('/local/copygroups/index.php', array('courseid' => $course->id));
+$PAGE->set_url('/local/copygroups/index.php', ['courseid' => $course->id]);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
@@ -35,20 +36,20 @@ $PAGE->requires->js_call_amd('local_copygroups/validation', 'init', ['from' => '
 
 $mform = new copydistinctgroups_form($validate_url, ['targetid' => $course->id, 'originalid' => $original_courseid]);
 
-if($mform->is_cancelled()) {
+if ($mform->is_cancelled()) {
     redirect($returnurl);
-} elseif ($data = $mform->get_data()) {
-    $data = array_filter((array) $data, function($entry) {
+} else if ($data = $mform->get_data()) {
+    $data = array_filter((array) $data, function ($entry) {
         return strpos($entry, 'group_') === 0;
     }, ARRAY_FILTER_USE_KEY);
 
     $groupids = [];
     foreach ($data as $key => $da) {
-        $groupid = explode('_' , $key)[1];
-        $groupids[$groupid] = $DB->get_record('groups' ,['id' => $groupid]);
+        $groupid = explode('_', $key)[1];
+        $groupids[$groupid] = $DB->get_record('groups', ['id' => $groupid]);
     }
-    group_helper::copy_groups($groupids , $courseid, $original_courseid);
-    redirect($returnurl,get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
+    group_helper::copy_groups($groupids, $courseid, $original_courseid);
+    redirect($returnurl, get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
 
 }
 echo $OUTPUT->header();

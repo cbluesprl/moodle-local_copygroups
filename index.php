@@ -8,11 +8,8 @@
  */
 
 
-/**
- * Dans l'idée, vérifier que le courseid existe
- * Vérifier les droits de l'utilisateur dans le cours
- */
 use local_copygroups\group_helper;
+
 global $PAGE, $CFG, $DB, $OUTPUT;
 
 
@@ -30,7 +27,7 @@ require_capability('moodle/course:managegroups', $context);
 
 $strcopygroups = get_string('pluginname', 'local_copygroups');
 
-$PAGE->set_url('/local/copygroups/index.php', array('courseid' => $course->id));
+$PAGE->set_url('/local/copygroups/index.php', ['courseid' => $course->id]);
 $PAGE->set_title("$course->shortname: $strcopygroups");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
@@ -41,17 +38,16 @@ $returnurl = new moodle_url('/group/index.php', ['id' => $course->id]);
 
 $mform = new copygroups_form(null, ['courseid' => $course->id]);
 
-if($mform->is_cancelled()) {
+if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    if(isset($data->select_distinct_groups) && $data->select_distinct_groups == '1') {
-        redirect(new moodle_url('/local/copygroups/groups_select.php', ['target'=> $data->source_course, 'original' => $course->id]));
+    if (isset($data->select_distinct_groups) && $data->select_distinct_groups == '1') {
+        redirect(new moodle_url('/local/copygroups/groups_select.php', ['target' => $data->source_course, 'original' => $course->id]));
     } else {
         group_helper::copy_all_groups($data->source_course, $data->courseid);
         redirect($returnurl, get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
-
 
 echo $OUTPUT->header();
 $mform->display();

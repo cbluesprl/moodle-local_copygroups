@@ -21,8 +21,8 @@ export const init = (from) => {
             modal.getRoot().on(ModalEvents.cancel, () => {
                 popupAlreadyDisplayed = false;
             });
-            if(from == 'index') {
-                if(!document.getElementById('id_select_distinct_groups').checked) {
+            if (from == 'index') {
+                if (!document.getElementById('id_select_distinct_groups').checked) {
                     modal.show();
                 }
             } else if (from == 'groups_select') {

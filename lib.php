@@ -8,14 +8,13 @@
  */
 
 
-/**
- * Display the edit custom information link in the course administration menu.
- *
+/** *
  * @throws coding_exception
  * @throws moodle_exception
  */
-function local_copygroups_extend_navigation_course($navigation, $course, $context) {
-    if(has_capability('moodle/course:managegroups', $context)) {
+function local_copygroups_extend_navigation_course($navigation, $course, $context)
+{
+    if (has_capability('moodle/course:managegroups', $context)) {
         $url = new moodle_url('/local/copygroups/index.php', ['courseid' => $course->id]);
         $settingsnode = navigation_node::create(get_string('course_import_groups_link', 'local_copygroups'), $url,
             navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
