@@ -14,7 +14,10 @@ use cache_helper;
 
 global $CFG;
 
-require($CFG->dirroot . '/group/lib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once $CFG->dirroot . '/group/lib.php';
+
 
 class group_helper
 {
