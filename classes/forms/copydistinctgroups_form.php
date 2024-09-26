@@ -15,12 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides the {@link copygroups_form} class.
- *
- * @package    local_copygroups
- * @copyright  2024 Cblue
- * @author     rdelvaux@cblue.be
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_copygroups
+ * @copyright   2024 CBlue SPRL
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

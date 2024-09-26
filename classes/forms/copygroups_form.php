@@ -15,11 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides the {@link copygroups_form} class.
- *
- * @package    local_copygroups
- * @copyright  2024 Cblue
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_copygroups
+ * @copyright   2024 CBlue SPRL
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,7 +26,6 @@ require_once($CFG->libdir . '/formslib.php');
 
 class copygroups_form extends moodleform
 {
-
     /**
      * Defines the form fields.
      */
@@ -49,23 +46,27 @@ class copygroups_form extends moodleform
             return false;
         }
 
-        $sql = "SELECT DISTINCT(c.id), c.shortname
+        [$insql, $inparams] = $DB->get_in_or_equal(explode(',', $roles_can_import), SQL_PARAMS_NAMED);
+
+        $sql = "SELECT DISTINCT c.id, c.shortname
             FROM {role_assignments} ra
             JOIN {context} ctx ON ra.contextid = ctx.id AND ctx.contextlevel = :context_course
             JOIN {course} c ON ctx.instanceid = c.id
             JOIN {user} u ON ra.userid = u.id
             JOIN {role} r ON ra.roleid = r.id
             JOIN {groups} g ON c.id = g.courseid
-            WHERE r.id IN (" . $roles_can_import . ")
+            WHERE r.id $insql
             AND u.id = :userid
-            AND c.id <> :thiscourseid; -- on n'importe pas depuis le cours courant
-";
-        $req = $DB->get_records_sql($sql, [
+            AND c.id <> :thiscourseid
+        ";
+        $params = [
             'context_course' => CONTEXT_COURSE,
             'roles_can_import' => get_config('local_copygroups', 'roles_can_import_groups'),
             'userid' => $USER->id,
             'thiscourseid' => $data['courseid']
-        ]);
+        ];
+
+        $req = $DB->get_records_sql($sql, $params + $inparams);
 
         $courses = [];
         $courses[0] = get_string('select');

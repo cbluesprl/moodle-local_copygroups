@@ -1,12 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * This script is owned by CBlue SPRL, please contact CBlue regarding any licences issues.
- *
- * @date :       15/02/2024
- * @author:      gnormand@cblue.be
- * @copyright:   CBlue SPRL, 2024
+ * @package     local_copygroups
+ * @copyright   2024 CBlue SPRL
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\notification;
 use local_copygroups\group_helper;
 
 global $PAGE, $CFG, $DB, $OUTPUT;
@@ -49,7 +63,7 @@ if ($mform->is_cancelled()) {
         $groupids[$groupid] = $DB->get_record('groups', ['id' => $groupid]);
     }
     group_helper::copy_groups($groupids, $courseid, $original_courseid);
-    redirect($returnurl, get_string('form:success', 'local_copygroups'), 1, \core\output\notification::NOTIFY_SUCCESS);
+    redirect($returnurl, get_string('form:success', 'local_copygroups'), 1, notification::NOTIFY_SUCCESS);
 
 }
 echo $OUTPUT->header();

@@ -1,11 +1,23 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- *
- *
- * @date 14/02/2024
- * @author Renaud Lemaire <rlemaire@cblue.be>
- * @copyright 2024 CBlue SPRL {@link https://www.cblue.be}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_copygroups
+ * @copyright   2024 CBlue SPRL
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_copygroups;
@@ -36,7 +48,6 @@ class group_helper
         if (count($groupstocopy) > 0) {
             $groupstocopybyname = self::get_groups_by_name($groupstocopy);
 
-
             $existinggroups = $DB->get_records('groups', ['courseid' => $coursedestinationid]);
             $existinggroupsbyname = self::get_groups_by_name($existinggroups);
 
@@ -59,17 +70,19 @@ class group_helper
             }
 
             [$insql, $inparams] = $DB->get_in_or_equal(array_keys($groupstocopy), SQL_PARAMS_NAMED);
+            $now = time();
             $sql = "SELECT gm.id as uselesskeytoavoidarrayoverided, ue.id, ue.userid, gm.groupid FROM {user_enrolments} ue
                             JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
                             JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
                             JOIN {user_enrolments} uedest ON uedest.userid = ue.userid
                             JOIN {enrol} edest ON uedest.enrolid = edest.id AND edest.courseid = :coursedestinationid
                             WHERE ue.status = 0
-                              AND ue.timestart < UNIX_TIMESTAMP()
-                              AND (ue.timeend = 0 OR ue.timeend > UNIX_TIMESTAMP())
+                              AND ue.timestart < $now
+                              AND (ue.timeend = 0 OR ue.timeend > $now)
                               AND uedest.status = 0
-                              AND uedest.timestart < UNIX_TIMESTAMP()
-                              AND (uedest.timeend = 0 OR uedest.timeend > UNIX_TIMESTAMP())";
+                              AND uedest.timestart < $now
+                              AND (uedest.timeend = 0 OR uedest.timeend > $now)";
+
             $params = $inparams;
             $params['coursesourceid'] = $coursesourceid;
             $params['coursedestinationid'] = $coursedestinationid;

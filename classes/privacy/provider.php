@@ -20,9 +20,19 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->component = 'local_copygroups';
-$plugin->version = 2024021500;
-$plugin->requires = 2022041900;
+namespace local_copygroups\privacy;
 
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = "1.0";
+use core_privacy\local\metadata\null_provider;
+
+class provider implements null_provider
+{
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
