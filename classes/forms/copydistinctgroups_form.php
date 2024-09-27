@@ -23,9 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-
 require_once($CFG->libdir . '/formslib.php');
-
 class copydistinctgroups_form extends moodleform
 {
 

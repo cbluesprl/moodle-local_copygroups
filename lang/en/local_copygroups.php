@@ -22,6 +22,7 @@
 
 $string['pluginname'] = 'Copy groups from courses';
 $string['privacy:metadata'] = 'Copy groups plugins does not store any personal data';
+$string['form:no_group'] = 'You don\'t have any group to import';
 $string['form:btn_import'] = 'Import';
 $string['form:btn_import_from_courses'] = 'Import groups from courses';
 $string['form:input_shortname'] = 'Shortname of the course you want to import groups from';

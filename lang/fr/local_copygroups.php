@@ -22,6 +22,7 @@
 
 $string['pluginname'] = 'Copier les groupes depuis un cours';
 $string['privacy:metadata'] = 'Le plugin "Copie de groupe" ne conserve aucun donnée à caractère privé';
+$string['form:no_group'] = 'Vous n\'avez aucun groupe à importer';
 $string['form:btn_import'] = 'Importer';
 $string['form:btn_import_from_courses'] = 'Importer les groupes depuis un cours';
 $string['form:input_shortname'] = 'Sélectionnez le cours depuis lequel importer les groupes';
@@ -31,6 +32,7 @@ $string['form:select_distinct_groups:desc'] = 'Renvoie vers une page où vous po
 $string['form:select_distinct_groups:desc_help'] = 'Renvoie vers une page où vous pourrez sélectionner les groupes que vous souhaitez importer';
 $string['form:success'] = 'Groupes importés avec succès';
 $string['course_import_groups_link'] = 'Importer des groupes';
+
 /** Settings */
 $string['settings:select_roles'] = 'Sélectionnez les rôles autorisés à importer les groupes d\'autres cours';
 

@@ -24,12 +24,10 @@ namespace local_copygroups;
 
 use cache_helper;
 
-global $CFG;
-
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once $CFG->dirroot . '/group/lib.php';
-
 
 class group_helper
 {
