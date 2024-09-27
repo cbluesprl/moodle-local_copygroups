@@ -23,6 +23,11 @@
 namespace local_copygroups;
 
 use cache_helper;
+use coding_exception;
+use dml_exception;
+use dml_transaction_exception;
+use Exception;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,23 +45,39 @@ class group_helper
         return self::copy_groups($groups, $coursesourceid, $coursedestinationid);
     }
 
+    /**
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws dml_transaction_exception
+     * @throws moodle_exception
+     */
     static public function copy_groups(array $groupstocopy, int $coursesourceid, int $coursedestinationid)
     {
         global $DB;
+
         if (count($groupstocopy) > 0) {
-            $groupstocopybyname = self::get_groups_by_name($groupstocopy);
+            try {
+                $transaction = $DB->start_delegated_transaction();
 
-            $existinggroups = $DB->get_records('groups', ['courseid' => $coursedestinationid]);
-            $existinggroupsbyname = self::get_groups_by_name($existinggroups);
+                $groupstocopybyname = self::get_groups_by_name($groupstocopy);
 
-            // Create missing groups
-            $groups_to_insert = array_diff_key($groupstocopybyname, $existinggroupsbyname);
-            foreach ($groups_to_insert as $group) {
-                $copy = clone $group;
-                $copy->courseid = $coursedestinationid;
-                $copy->id = $DB->insert_record('groups', $copy, true);
-                $existinggroups[$copy->id] = $copy;
-                $existinggroupsbyname[$copy->name] = $copy;
+                $existinggroups = $DB->get_records('groups', ['courseid' => $coursedestinationid]);
+                $existinggroupsbyname = self::get_groups_by_name($existinggroups);
+
+                // Create missing groups
+                $groups_to_insert = array_diff_key($groupstocopybyname, $existinggroupsbyname);
+                foreach ($groups_to_insert as $group) {
+                    $copy = clone $group;
+                    $copy->courseid = $coursedestinationid;
+                    $copy->id = $DB->insert_record('groups', $copy, true);
+                    $existinggroups[$copy->id] = $copy;
+                    $existinggroupsbyname[$copy->name] = $copy;
+                }
+
+                $transaction->allow_commit();
+            } catch (Exception $e) {
+                $transaction->rollback($e);
+                throw new moodle_exception('groupcloningerror', 'error', '', $e->getMessage());
             }
 
             // Remove members from existing groups
@@ -70,16 +91,16 @@ class group_helper
             [$insql, $inparams] = $DB->get_in_or_equal(array_keys($groupstocopy), SQL_PARAMS_NAMED);
             $now = time();
             $sql = "SELECT gm.id as uselesskeytoavoidarrayoverided, ue.id, ue.userid, gm.groupid FROM {user_enrolments} ue
-                            JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
-                            JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
-                            JOIN {user_enrolments} uedest ON uedest.userid = ue.userid
-                            JOIN {enrol} edest ON uedest.enrolid = edest.id AND edest.courseid = :coursedestinationid
-                            WHERE ue.status = 0
-                              AND ue.timestart < $now
-                              AND (ue.timeend = 0 OR ue.timeend > $now)
-                              AND uedest.status = 0
-                              AND uedest.timestart < $now
-                              AND (uedest.timeend = 0 OR uedest.timeend > $now)";
+                    JOIN {enrol} e ON ue.enrolid = e.id AND e.courseid = :coursesourceid
+                    JOIN {groups_members} gm ON gm.userid = ue.userid AND gm.groupid $insql
+                    JOIN {user_enrolments} uedest ON uedest.userid = ue.userid
+                    JOIN {enrol} edest ON uedest.enrolid = edest.id AND edest.courseid = :coursedestinationid
+                    WHERE ue.status = 0
+                      AND ue.timestart < $now
+                      AND (ue.timeend = 0 OR ue.timeend > $now)
+                      AND uedest.status = 0
+                      AND uedest.timestart < $now
+                      AND (uedest.timeend = 0 OR uedest.timeend > $now)";
 
             $params = $inparams;
             $params['coursesourceid'] = $coursesourceid;
