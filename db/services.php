@@ -20,10 +20,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->component = 'local_copygroups';
-
-$plugin->version = 2024092700;
-$plugin->requires = 2023100900;
-
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = "1.1";
+$functions = [
+    'local_copygroups_get_courses' => [
+        'classname' => 'local_copygroups\external\get_courses',
+        'methodname' => 'get_courses',
+        'classpath' => 'local/copygroups/classes/external/get_courses.php',
+        'description' => 'Get courses to clone groups',
+        'type' => 'read',
+        'ajax' => true
+    ]
+];

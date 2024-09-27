@@ -42,50 +42,20 @@ class copygroups_form extends moodleform
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        $roles_can_import = get_config('local_copygroups', 'roles_can_import_groups');
-        if (!empty($roles_can_import)) {
-            [$insql, $inparams] = $DB->get_in_or_equal(explode(',', $roles_can_import), SQL_PARAMS_NAMED);
+        $mform->addElement('autocomplete', 'source_course', get_string('form:input_shortname', 'local_copygroups'), [], [
+            'multiple' => false,
+            'ajax' => 'local_copygroups/get_courses'
+        ]);
+        $mform->setType('source_course', PARAM_INT);
+        $mform->addHelpButton('source_course', 'form:input_shortname', 'local_copygroups');
 
-            $sql = "SELECT DISTINCT c.id, c.shortname
-            FROM {role_assignments} ra
-            JOIN {context} ctx ON ra.contextid = ctx.id AND ctx.contextlevel = :context_course
-            JOIN {course} c ON ctx.instanceid = c.id
-            JOIN {user} u ON ra.userid = u.id
-            JOIN {role} r ON ra.roleid = r.id
-            JOIN {groups} g ON c.id = g.courseid
-            WHERE r.id $insql
-            AND u.id = :userid
-            AND c.id <> :thiscourseid
-        ";
-            $params = [
-                'context_course' => CONTEXT_COURSE,
-                'roles_can_import' => get_config('local_copygroups', 'roles_can_import_groups'),
-                'userid' => $USER->id,
-                'thiscourseid' => $data['courseid']
-            ];
+        $mform->addElement('checkbox', 'select_distinct_groups', get_string('form:select_distinct_groups', 'local_copygroups'));
+        $mform->addHelpButton('select_distinct_groups', 'form:select_distinct_groups:desc', 'local_copygroups');
 
-            $req = $DB->get_records_sql($sql, $params + $inparams);
-
-            $courses = [];
-            $courses[0] = get_string('select');
-            foreach ($req as $c) {
-                $courses[$c->id] = $c->shortname;
-            }
-
-            $mform->addElement('autocomplete', 'source_course', get_string('form:input_shortname', 'local_copygroups'), $courses);
-            $mform->setType('source_course', PARAM_INT);
-            $mform->addHelpButton('source_course', 'form:input_shortname', 'local_copygroups');
-
-            $mform->addElement('checkbox', 'select_distinct_groups', get_string('form:select_distinct_groups', 'local_copygroups'));
-            $mform->addHelpButton('select_distinct_groups', 'form:select_distinct_groups:desc', 'local_copygroups');
-
-            $mform->disabledIf('submitbutton', 'source_course', 'eq', null);
-            $mform->disabledIf('submitbutton', 'source_course', 'eq', 0);
-            $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
-            $this->set_data($data);
-        } else {
-            $mform->addElement('html', '<div class="alert alert-danger">' . get_string('form:no_group', 'local_copygroups') . '</div>');
-        }
+        $mform->disabledIf('submitbutton', 'source_course', 'eq', null);
+        $mform->disabledIf('submitbutton', 'source_course', 'eq', 0);
+        $this->add_action_buttons(true, get_string('form:btn_import', 'local_copygroups'));
+        $this->set_data($data);
     }
 }
 
