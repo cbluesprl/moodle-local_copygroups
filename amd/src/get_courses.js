@@ -28,10 +28,13 @@ import Ajax from 'core/ajax';
  * @param {Function} failure A function to call in case of failure, receiving the error message.
  */
 export async function transport(selector, query, callback, failure) {
+    const urlParams = new URLSearchParams(window.location.search);
+
     const request = {
         methodname: 'local_copygroups_get_courses',
         args: {
-            query: query
+            query: query,
+            course_id: urlParams.get('courseid') ?? null
         }
     };
 

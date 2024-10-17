@@ -24,23 +24,42 @@ namespace local_copygroups\external;
 
 global $CFG;
 
+use coding_exception;
+use context_course;
+use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
 use external_single_structure;
 use external_value;
+use invalid_parameter_exception;
+use required_capability_exception;
+use restricted_context_exception;
 
 require_once $CFG->dirroot . '/lib/externallib.php';
 
 class get_courses extends external_api
 {
     /**
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     * @throws required_capability_exception
      */
-    public static function get_courses(string $query)
+    public static function get_courses(string $query, int $course_id)
     {
         global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_courses_parameters(), [
+            'query' => $query,
+            'course_id' => $course_id
+        ]);
+
+        $context = context_course::instance($params['course_id']);
+        self::validate_context($context);
+        require_capability('moodle/course:managegroups', $context);
+
 
         $roles_can_import = get_config('local_copygroups', 'roles_can_import_groups');
         if (!empty($roles_can_import)) {
@@ -62,7 +81,7 @@ class get_courses extends external_api
                 'context_course' => CONTEXT_COURSE,
                 'roles_can_import' => get_config('local_copygroups', 'roles_can_import_groups'),
                 'userid' => $USER->id,
-                'search' => '%' . $DB->sql_like_escape($query) . '%'
+                'search' => '%' . $DB->sql_like_escape($params['query']) . '%'
             ];
 
             $req = $DB->get_records_sql($sql, $params + $inparams);
@@ -84,7 +103,8 @@ class get_courses extends external_api
     public static function get_courses_parameters(): external_function_parameters
     {
         return new external_function_parameters([
-            'query' => new external_value(PARAM_TEXT, 'Course shortname', false)
+            'query' => new external_value(PARAM_TEXT, 'Course shortname', VALUE_OPTIONAL),
+            'course_id' => new external_value(PARAM_INT, 'Source course id', VALUE_REQUIRED),
         ]);
     }
 
