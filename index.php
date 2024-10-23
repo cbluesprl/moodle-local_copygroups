@@ -21,15 +21,12 @@
  */
 
 use core\output\notification;
+use local_copygroups\form\copy_groups;
 use local_copygroups\group_helper;
 
-global $PAGE, $CFG, $DB, $OUTPUT;
-
-
 require('../../config.php');
-require_once("$CFG->dirroot/local/copygroups/classes/forms/copygroups_form.php");
-require_once("$CFG->dirroot/local/copygroups/classes/group_helper.php");
 
+global $PAGE, $CFG, $DB, $OUTPUT;
 
 $courseid = required_param('courseid', PARAM_INT);
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -49,7 +46,7 @@ $PAGE->requires->js_call_amd('local_copygroups/validation', 'init', ['from' => '
 
 $returnurl = new moodle_url('/group/index.php', ['id' => $course->id]);
 
-$mform = new copygroups_form(null, ['courseid' => $course->id]);
+$mform = new copy_groups(null, ['courseid' => $course->id]);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
