@@ -20,12 +20,16 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_copygroups\form;
+
+use moodleform;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 
-class copygroups_form extends moodleform
+class copy_groups extends moodleform
 {
     /**
      * Defines the form fields.
